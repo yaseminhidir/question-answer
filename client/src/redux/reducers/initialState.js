@@ -1,5 +1,6 @@
 export default {
     user:null,
-    error:null
+    error:null,
+    success:null,
   };
   

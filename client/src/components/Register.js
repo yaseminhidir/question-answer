@@ -11,7 +11,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import * as allActions from "../redux/actions/authActions"
+import * as allActions from "../redux/actions/authActions";
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
 
 function Copyright(props) {
   return (
@@ -34,7 +36,8 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
-  var state = useSelector((state) => state);
+  var error = useSelector((state) => state.authErrorReducer);
+
   const [user, setUser] = useState({ name: "", password: "", email: "" });
   const dispatch = useDispatch();
   function register() {
@@ -53,6 +56,11 @@ export default function SignUp() {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+        {error != null && (
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert severity="error"> {error} </Alert>
+          </Stack>
+        )}
         <CssBaseline />
         <Box
           sx={{

@@ -12,9 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as allActions from "../redux/actions/authActions";
-
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
 
 function Copyright(props) {
   return (
@@ -37,9 +38,11 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const [user, setUser] = useState({ name: "", password: "", email: "" });
+  var error = useSelector((state) => state.authErrorReducer);
 
+  const [user, setUser] = useState({ name: "", password: "", email: "" });
   const dispatch = useDispatch();
+
   function login() {
     console.log("login clicked");
     allActions.login(user)(dispatch);
@@ -48,11 +51,15 @@ export default function SignIn() {
     var { name, value } = event.target;
     var newUser = { ...user, [name]: value };
     setUser(newUser);
-    console.log(newUser);
   }
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+        {error != null && (
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert severity="error"> {error} </Alert>
+          </Stack>
+        )}
         <CssBaseline />
         <Box
           sx={{

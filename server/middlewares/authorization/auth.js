@@ -22,8 +22,10 @@ const checkAuth = (req, res, next) => {
         };
         console.log(decoded);
       }
-      next();
+      return next();
     });
+  } else {
+    return next();
   }
 };
 

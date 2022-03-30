@@ -1,14 +1,17 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import NavBar from "./components/NavBar";
 import "./App.css";
 import RouterView from "./components/RouterView";
 import SideBar from "./components/SideBar";
 import Grid from "@mui/material/Grid";
 import * as allActions from "./redux/actions/authActions"
-import { useDispatch} from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
 import axios from "axios";
+import Loading from "../src/components/Loading";
 
 function App() {
+  var loginUser = useSelector((state) => state.authReducer);
+  const [loading, setLoading] = useState(true);
   const dispatch=useDispatch();
   useEffect(() => {
     async function getUser(){
@@ -18,11 +21,15 @@ function App() {
      }
     };
     getUser();
-  }, [])
+    setLoading(false);
+  }, []);
+  if (loading) {
+    return <Loading></Loading>;
+  }
   return (
     <div className="App">
        
-      <NavBar></NavBar>
+      <NavBar loginUser={loginUser}></NavBar>
       <Grid container spacing={2}>   
         <Grid item xs={3}>
           <SideBar></SideBar>

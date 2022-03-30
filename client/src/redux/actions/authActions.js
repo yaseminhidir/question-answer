@@ -22,12 +22,10 @@ export function register(req) {
         "http://localhost:5000/api/auth/register",
         req
       );
-      console.log(res.data);
       dispatch(authSuccess(res.data.data));
       dispatch(authError(null));
     } catch (error) {
-      initialState.error = error.response.data.message;
-    }
+      dispatch(authError(error.response.data.message));     }
   };
 }
 export function login(req) {
@@ -41,7 +39,21 @@ export function login(req) {
       dispatch(authSuccess(res.data.data));
       dispatch(authError(null));
     } catch (error) {
-      initialState.error = error.response.data.message;
+  dispatch(authError(error.response.data.message));    }
+  };
+}
+
+export function logout() {
+  return async function (dispatch) {
+    try {
+      var res = await axios.get(
+        "http://localhost:5000/api/auth/logout"
+      );
+      dispatch(authSuccess(null));
+      dispatch(authError(null));
+      console.log("logout successfull")
+    } catch (error) {
+      dispatch(authError(error.response.data.message));
     }
   };
 }

@@ -34,6 +34,7 @@ const PORT = process.env.PORT;
 app.use(checkAuth);
 app.use("/api", routers);
 
+
 // Error Handler
 
 app.use(customErrorHandler);
