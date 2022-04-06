@@ -28,6 +28,10 @@ const AnswerSchema = new Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Question",
   },
+  likeCount: {
+    type: Number,
+    default: 0,
+  },
 }, {toObject:{virtuals:true}, toJSON:{virtuals:true}});
 
 AnswerSchema.pre("save", async function (next) {

@@ -44,7 +44,7 @@ const logout = asyncErrorWrapper(async (req, res, next) => {
   const { NODE_ENV } = process.env;
   return res
     .status(200)
-    .cookie({
+    .cookie("access_token",{
       httpOnly: true,
       expires: new Date(Date.now()),
       secure: NODE_ENV === "development" ? false : true,
@@ -54,14 +54,14 @@ const logout = asyncErrorWrapper(async (req, res, next) => {
       message: "logout successfull",
     });
 });
-const getUser = (req, res, next) => {
+const getUser = async (req, res, next) => {
+  const id = req.user.id;
+  console.log(id);
+  const user = await User.findById(id);
+  console.log(user);
   res.json({
     succes: true,
-    data: {
-      id: req.user.id,
-      name: req.user.name,
-      data: user,
-    },
+    data: user.toObject()
   });
 };
 
@@ -150,9 +150,9 @@ const editDetails = asyncErrorWrapper(async (req, res, next) => {
     runValidators: true,
   });
   return res.status(200).json({
-    success:true,
-    data:user
-  })
+    success: true,
+    data: user,
+  });
 });
 module.exports = {
   register,

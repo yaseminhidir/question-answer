@@ -20,6 +20,7 @@ const checkAuth = (req, res, next) => {
           id: decoded.id,
           name: decoded.name,
         };
+        
         console.log(decoded);
       }
       return next();

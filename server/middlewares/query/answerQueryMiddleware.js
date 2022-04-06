@@ -30,6 +30,8 @@ const answerQueryMiddleware = function (model, options) {
           if (answer.likes) {
             if (req.user) {
               answer.likedByCurrentUser = answer.likes.includes(req.user.id);
+              console.log(req.user.id)
+              console.log(answer.likedByCurrentUser)
             } else {
               answer.likedByCurrentUser = false;
             }

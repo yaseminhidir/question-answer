@@ -5,7 +5,8 @@ const asyncErrorWrapper = require("express-async-handler");
 
 const addNewAnswerToQuestion = asyncErrorWrapper(async (req, res, next) => {
   const question_id = req.data._id;
-  const user_id = req.data.user._id;
+  const user_id = req.user.id;
+  console.log(user_id);
   const information = req.body;
   const answer = await Answer.create({
     ...information,
@@ -19,14 +20,9 @@ const addNewAnswerToQuestion = asyncErrorWrapper(async (req, res, next) => {
 });
 
 const getAllAnswersByQuestions = asyncErrorWrapper(async (req, res, next) => {
-  const { question_id } = req.params;
-  const question = await Question.findById(question_id).populate("answers");
-  const answers = question.answers;
-  return res.status(200).json({
-    success: true,
-    count: answers.length,
-    data: answers,
-  });
+ 
+  return res.status(200).json(res.queryResults);
+ 
 });
 
 const getSingleAnswer = asyncErrorWrapper(async (req, res, next) => {
@@ -79,6 +75,7 @@ const likeAnswer = asyncErrorWrapper(async (req, res, next) => {
   }
 
   answer.likes.push(req.user.id);
+  answer.likeCount = answer.likes.length;
   await answer.save();
 
   res.status(200).json({
@@ -97,6 +94,7 @@ const undoLikeAnswer = asyncErrorWrapper(async (req, res, next) => {
   }
   const index = answer.likes.indexOf(req.user.id);
   answer.likes.splice(index, 1);
+  answer.likeCount = answer.likes.length;
   await answer.save();
 
   res.status(200).json({

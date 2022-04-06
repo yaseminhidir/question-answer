@@ -50,7 +50,7 @@ router.get(
       { path: "user", select: "name email profile_image" },
       {
         path: "answers",
-        select: "content likes",  populate:{
+        select: "content likes likeCount",  populate:{
           path : "user",
           select: "name email profile_image"
       }

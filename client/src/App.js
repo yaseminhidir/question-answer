@@ -19,6 +19,7 @@ function App() {
      if(res.data){
       dispatch(allActions.authSuccess(res.data));
      }
+     console.log(res)
     };
     getUser();
     setLoading(false);
@@ -30,12 +31,11 @@ function App() {
     <div className="App">
        
       <NavBar loginUser={loginUser}></NavBar>
-      <Grid container spacing={2}>   
-        <Grid item xs={3}>
+      <Grid container spacing={{ xs: 1, md: 2 }} columns={{ xs: 12, sm: 12, md: 12, xl:12}}>   
+        <Grid item xs={3} md={3} sm={4} lg={3} >
           <SideBar></SideBar>
         </Grid>
-        <Grid item xs={8}>
-          
+        <Grid item xs={9} md={8} sm={8} lg={8}>         
       <RouterView></RouterView>
         </Grid>
         </Grid>

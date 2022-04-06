@@ -8,19 +8,17 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
 import ListItem from "@mui/material/ListItem";
 import * as allActions from "../redux/actions/authActions";
-import { useDispatch, } from "react-redux";
+import { useDispatch } from "react-redux";
 
 export default function NavBar({ loginUser }) {
   const dispatch = useDispatch();
-  function logOutFunc(){
+  function logOutFunc() {
     allActions.logout()(dispatch);
-    console.log("logout clicked")
+    console.log("logout clicked");
   }
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -37,7 +35,7 @@ export default function NavBar({ loginUser }) {
         sx={{
           marginBottom: "15px",
           display: "flex",
-          alignItems:"center",
+          alignItems: "center",
           backgroundColor: "#757ce88c",
           boxShadow: "0px 5px 14px 7px rgba(0,0,0,0.22)",
         }}
@@ -61,19 +59,23 @@ export default function NavBar({ loginUser }) {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}>{loginUser.name[0]}</Avatar>
             </IconButton>
           </Tooltip>
         ) : (
-          <Box sx={{display:"inherit", marginLeft:"auto", marginRight:"20px"}}>
-         
-               <MenuItem  component={Link} to={"/register"}>
-              <ListItem sx={{paddingLeft:"0px", paddingRight:"0px"}} >Register</ListItem>
+          <Box
+            sx={{ display: "inherit", marginLeft: "auto", marginRight: "20px" }}
+          >
+            <MenuItem component={Link} to={"/register"}>
+              <ListItem sx={{ paddingLeft: "0px", paddingRight: "0px" }}>
+                Register
+              </ListItem>
             </MenuItem>{" "}
-            <MenuItem  component={Link} to={"/login"}>
-              <ListItem sx={{paddingLeft:"0px", paddingRight:"0px"}}>Login</ListItem>
+            <MenuItem component={Link} to={"/login"}>
+              <ListItem sx={{ paddingLeft: "0px", paddingRight: "0px" }}>
+                Login
+              </ListItem>
             </MenuItem>{" "}
-            
           </Box>
         )}
       </Box>
@@ -112,29 +114,17 @@ export default function NavBar({ loginUser }) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem>
+        <MenuItem
+          component={Link}
+          to="/profile
+        "
+        >
           <Avatar /> Profile
         </MenuItem>
-        <MenuItem>
-          <Avatar /> My account
-        </MenuItem>
         <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
         <MenuItem onClick={(e) => logOutFunc()}>
-          <ListItemIcon >
-            <Logout fontSize="small" 
-/>
+          <ListItemIcon>
+            <Logout fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>

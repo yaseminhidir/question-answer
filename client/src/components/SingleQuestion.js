@@ -11,55 +11,61 @@ import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import Loading from "./Loading";
-import { CKEditor } from "ckeditor4-react";
+import { TextField } from "@mui/material";
+import { Button } from "@mui/material";
+import { useSelector } from "react-redux";
+
 import { CardActions, CardHeader } from "@mui/material";
-import { FavoriteBorderSharp } from "@mui/icons-material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import PaginationComponent from "./PaginationComponent";
 
 const SingleQuestion = () => {
   let { questionId } = useParams();
   const [question, setQuestion] = useState({ answers: [] });
-  const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState();
+  const [success, setSuccess] = useState(false);
+  const [answerMessage, setAnswerMessage] = useState();
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState();
+  const [currentPage, setCurrentPage] = useState({});
+  const [answer, setAnswer] = useState({ content: "" });
 
+  function onPageChange(event, new_page) {
+    setCurrentPage(new_page);
+    console.log(new_page);
+  }
+  const user = useSelector((state) => state.authReducer);
   async function load() {
     try {
       var res = await axios.get(
-        "http://localhost:5000/api/questions/" + questionId
+        "http://localhost:5000/api/questions/" + questionId,
+        { params: { page: currentPage, limit: 5 } }
       );
+      console.log(res.data.data);
       setQuestion(res.data.data[0]);
-      setSuccess(res.data.success);
+      console.log(res.data.pagination);
+      setPagination(res.data.pagination);
       setLoading(false);
     } catch (error) {
-      console.log("error response", error.response.data);
-      setSuccess(error.response.data.success);
       setMessage(error.response.data.message);
     }
   }
   useEffect(async () => {
     load();
-  }, [questionId]);
+  }, [questionId, currentPage]);
 
-  if (!success) {
-    return (
-      <Stack sx={{ width: "100%" }} spacing={2}>
-        <Alert severity="error"> {message} </Alert>
-      </Stack>
-    );
-  }
   if (loading) {
     return <Loading></Loading>;
   }
   async function likeQuestionFunc() {
     try {
       if (!question.likedByCurrentUser) {
-        var res = await axios.post(
+        await axios.post(
           "http://localhost:5000/api/questions/" + questionId + "/like"
         );
         load();
       } else {
-        var res = await axios.post(
+        await axios.post(
           "http://localhost:5000/api/questions/" + questionId + "/undo_like"
         );
 
@@ -67,7 +73,7 @@ const SingleQuestion = () => {
       }
     } catch (error) {
       console.log("error response like question", error.response.data);
-      setSuccess(error.response.data.success);
+
       setMessage(error.response.data.message);
     }
   }
@@ -75,7 +81,7 @@ const SingleQuestion = () => {
     try {
       var answer = question.answers.find((x) => x.id === answerId);
       if (!answer.likedByCurrentUser) {
-        var res = await axios.post(
+        await axios.post(
           "http://localhost:5000/api/questions/" +
             questionId +
             "/answers/" +
@@ -84,7 +90,7 @@ const SingleQuestion = () => {
         );
         load();
       } else {
-        var res = await axios.post(
+        await axios.post(
           "http://localhost:5000/api/questions/" +
             questionId +
             "/answers/" +
@@ -95,12 +101,42 @@ const SingleQuestion = () => {
       }
     } catch (error) {
       console.log("error response like answer", error.response.data);
-      setSuccess(error.response.data.success);
+      setMessage(error.response.data.message);
+    }
+  }
+  function onChangeHandler(event) {
+    var { name, value } = event.target;
+    var newAnswer = { ...answer, [name]: value };
+    setAnswer(newAnswer);
+    console.log(newAnswer);
+  }
+  async function AddAnswer() {
+    try {
+      var res = await axios.post(
+        "http://localhost:5000/api/questions/" + question.id + "/answers",
+        answer
+      );
+      console.log(res);
+      setAnswerMessage("Succesfully added");
+      setSuccess(true);
+      load();
+    } catch (error) {
       setMessage(error.response.data.message);
     }
   }
   return (
     <Box>
+      {message != null && (
+        <Stack sx={{ width: "100%" }} spacing={2}>
+          <Alert severity="error"> {message} </Alert>
+        </Stack>
+      )}
+      {success === true && (
+        <Stack sx={{ width: "100%" }} spacing={2}>
+          <Alert severity="success"> {answerMessage} </Alert>
+        </Stack>
+      )}
+
       <Typography
         sx={{ fontSize: 14, fontWeight: "bold" }}
         color="text.secondary"
@@ -196,7 +232,7 @@ const SingleQuestion = () => {
                     color="text.secondary"
                     gutterBottom
                   >
-                    {question.likeCount} likes
+                    {answer.likeCount} likes
                   </Typography>{" "}
                 </Box>
               </Grid>
@@ -248,8 +284,29 @@ const SingleQuestion = () => {
         >
           Your Answer
         </Typography>
-        <CKEditor />
+        <TextField
+          id="about"
+          multiline
+          rows={7}
+          sx={{ width: "100vw" }}
+          size="small"
+          value={answer.content}
+          name="content"
+          onChange={onChangeHandler}
+        />
+        <Grid container spacing={2} sx={{padding:"10px"}}>
+          <Grid item xs={4}></Grid>
+          <Grid item xs={4}></Grid>
+          <Grid item xs={4} sx={{display:"flex", justifyContent:"end"}}>
+            <Button onClick={() => AddAnswer()} variant="contained" size="small">Post your Answer</Button>
+          </Grid>
+        </Grid>
       </Card>
+
+      <PaginationComponent
+        onPageChange={onPageChange}
+        pagination={pagination}
+      ></PaginationComponent>
     </Box>
   );
 };

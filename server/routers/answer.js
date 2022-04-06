@@ -11,7 +11,8 @@ const {
   } = require("../controllers/answer");
 const {
     getAccessToRoute,
-    getAnswerOwnerAccess
+    getAnswerOwnerAccess,
+    getUser
   } = require("../middlewares/authorization/auth");
   const {
     checkQuestionAndAnswerExist
