@@ -9,7 +9,7 @@ import { Grid } from "@mui/material";
 import moment from "moment/min/moment-with-locales";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
-import Loading from "./Loading"
+import Loading from "../Loading"
 const Profile = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);

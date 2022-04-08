@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
-import Questions from "./Questions";
-import Users from "./Users";
-import SingleQuestion from "./SingleQuestion";
-import Register from "./Register";
-import Login from "./Login";
-import Profile from "./Profile";
-import EditProfile from "./EditProfile"
+import Questions from "./questions/Questions";
+import Users from "./users/Users";
+import SingleQuestion from "./questions/SingleQuestion";
+import Register from "./users/Register";
+import Login from "./users/Login";
+import Profile from "./users/Profile";
+import EditProfile from "./users/EditProfile"
+import AskQuestion from "./questions/AskQuestion";
 
 const RouterView = () => {
   return (
@@ -18,7 +19,7 @@ const RouterView = () => {
       <Route path="login" element={<Login />} />
       <Route path="profile"  element={<Profile />} />
      <Route path="profile/edit" element={<EditProfile />} />
-  
+     <Route path="newquestion" element={<AskQuestion/>}></Route>
     </Routes>
   );
 };

@@ -11,6 +11,10 @@
   }
 }
 
+.css-11qr2p8-MuiButtonBase-root-MuiButton-root{
+  text-transform: none !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

@@ -10,6 +10,7 @@ const {
   deleteQuestion,
   likeQuestion,
   undoLikeQuestion,
+  getQuestionsByUserId,
 } = require("../controllers/question");
 const {
   getAccessToRoute,
@@ -36,6 +37,11 @@ router.get(
   }),
   getAllQuestions
 );
+router.get(
+  "/getQuestionsByUserId",
+ 
+  getQuestionsByUserId
+);
 router.post("/:id/like", [getAccessToRoute, checkQuestionExist], likeQuestion);
 router.post(
   "/:id/undo_like",
@@ -50,10 +56,11 @@ router.get(
       { path: "user", select: "name email profile_image" },
       {
         path: "answers",
-        select: "content likes likeCount",  populate:{
-          path : "user",
-          select: "name email profile_image"
-      }
+        select: "content likes likeCount",
+        populate: {
+          path: "user",
+          select: "name email profile_image",
+        },
       },
     ],
   }),

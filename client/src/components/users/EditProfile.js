@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
-import Loading from "./Loading";
+import Loading from "../Loading";
 
 const EditProfile = () => {
   const [user, setUser] = useState({

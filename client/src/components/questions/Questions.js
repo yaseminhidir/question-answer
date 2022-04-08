@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import QuestionItem from "./QuestionItem";
 import axios from "axios";
-import PaginationComponent from "./PaginationComponent";
-import Loading from "./Loading";
+import PaginationComponent from "../PaginationComponent";
+import Loading from "../Loading";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
@@ -14,13 +16,14 @@ const Questions = () => {
     setCurrentPage(new_page);
   }
   useEffect(async () => {
+    setLoading(true);
     var res = await axios.get("http://localhost:5000/api/questions", {
       params: { page: currentPage, limit: 5 },
     });
 
     setQuestions(res.data.data);
     setPagination(res.data.pagination);
-   
+
     setLoading(false);
   }, [currentPage]);
 
@@ -30,6 +33,15 @@ const Questions = () => {
   return (
     <div>
       {" "}
+      <Button
+        to="/newquestion"
+        component={Link}
+        variant="contained"
+        size="small"
+        sx={{ marginBottom: "10px" }}
+      >
+        Ask New Question
+      </Button>
       {questions.map((question) => (
         <QuestionItem key={question._id} question={question}></QuestionItem>
       ))}

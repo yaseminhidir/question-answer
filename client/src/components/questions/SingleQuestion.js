@@ -10,14 +10,14 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import Loading from "./Loading";
+import Loading from "../Loading";
 import { TextField } from "@mui/material";
 import { Button } from "@mui/material";
 import { useSelector } from "react-redux";
-
+import { Link } from "react-router-dom";
 import { CardActions, CardHeader } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import PaginationComponent from "./PaginationComponent";
+import PaginationComponent from "../PaginationComponent";
 
 const SingleQuestion = () => {
   let { questionId } = useParams();
@@ -29,6 +29,7 @@ const SingleQuestion = () => {
   const [pagination, setPagination] = useState();
   const [currentPage, setCurrentPage] = useState({});
   const [answer, setAnswer] = useState({ content: "" });
+ 
 
   function onPageChange(event, new_page) {
     setCurrentPage(new_page);
@@ -37,6 +38,7 @@ const SingleQuestion = () => {
   const user = useSelector((state) => state.authReducer);
   async function load() {
     try {
+      setLoading(true);
       var res = await axios.get(
         "http://localhost:5000/api/questions/" + questionId,
         { params: { page: currentPage, limit: 5 } }
@@ -47,6 +49,7 @@ const SingleQuestion = () => {
       setPagination(res.data.pagination);
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       setMessage(error.response.data.message);
     }
   }
@@ -60,11 +63,13 @@ const SingleQuestion = () => {
   async function likeQuestionFunc() {
     try {
       if (!question.likedByCurrentUser) {
+        setLoading(true);
         await axios.post(
           "http://localhost:5000/api/questions/" + questionId + "/like"
         );
         load();
       } else {
+        setLoading(true);
         await axios.post(
           "http://localhost:5000/api/questions/" + questionId + "/undo_like"
         );
@@ -73,13 +78,26 @@ const SingleQuestion = () => {
       }
     } catch (error) {
       console.log("error response like question", error.response.data);
-
+      setLoading(false);
       setMessage(error.response.data.message);
     }
   }
   async function likeAnswerFunc(answerId) {
     try {
       var answer = question.answers.find((x) => x.id === answerId);
+      var newAnswers = [...question.answers];
+      var answerIndex = newAnswers.indexOf(answer);
+      newAnswers[answerIndex] = {
+        ...answer,
+        loading: true,
+      };
+      var newQuestion = {
+        ...question,
+        answers: newAnswers,
+      };
+      setQuestion(newQuestion);
+
+      var updateAnswer = null;
       if (!answer.likedByCurrentUser) {
         await axios.post(
           "http://localhost:5000/api/questions/" +
@@ -88,7 +106,9 @@ const SingleQuestion = () => {
             answerId +
             "/like"
         );
-        load();
+        updateAnswer = {
+          likedByCurrentUser: true,
+        };
       } else {
         await axios.post(
           "http://localhost:5000/api/questions/" +
@@ -97,10 +117,24 @@ const SingleQuestion = () => {
             answerId +
             "/undo_like"
         );
-        load();
+        updateAnswer = {
+          likedByCurrentUser: false,
+        };
       }
+      newAnswers[answerIndex] = {
+        ...answer,
+        ...updateAnswer,
+        loading: false,
+      };
+
+      var newQuestion = {
+        ...question,
+        answers: newAnswers,
+      };
+      setQuestion(newQuestion);
     } catch (error) {
       console.log("error response like answer", error.response.data);
+      setLoading(false);
       setMessage(error.response.data.message);
     }
   }
@@ -108,10 +142,11 @@ const SingleQuestion = () => {
     var { name, value } = event.target;
     var newAnswer = { ...answer, [name]: value };
     setAnswer(newAnswer);
-    console.log(newAnswer);
+ 
   }
   async function AddAnswer() {
     try {
+      setLoading(true);
       var res = await axios.post(
         "http://localhost:5000/api/questions/" + question.id + "/answers",
         answer
@@ -121,6 +156,7 @@ const SingleQuestion = () => {
       setSuccess(true);
       load();
     } catch (error) {
+      setLoading(false);
       setMessage(error.response.data.message);
     }
   }
@@ -136,7 +172,15 @@ const SingleQuestion = () => {
           <Alert severity="success"> {answerMessage} </Alert>
         </Stack>
       )}
-
+ <Button
+        to="/newquestion"
+        component={Link}
+        variant="contained"
+        size="small"
+        sx={{ marginBottom: "10px" }}
+      >
+        Ask New Question
+      </Button>
       <Typography
         sx={{ fontSize: 14, fontWeight: "bold" }}
         color="text.secondary"
@@ -214,6 +258,7 @@ const SingleQuestion = () => {
       </Typography>
       {question.answers.map((answer) => (
         <Card key={answer._id} sx={{ marginBottom: "10px" }}>
+          {answer.loading == true && <Loading></Loading>}
           <CardContent>
             <Grid container spacing={2}>
               <Grid
@@ -294,11 +339,17 @@ const SingleQuestion = () => {
           name="content"
           onChange={onChangeHandler}
         />
-        <Grid container spacing={2} sx={{padding:"10px"}}>
+        <Grid container spacing={2} sx={{ padding: "10px" }}>
           <Grid item xs={4}></Grid>
           <Grid item xs={4}></Grid>
-          <Grid item xs={4} sx={{display:"flex", justifyContent:"end"}}>
-            <Button onClick={() => AddAnswer()} variant="contained" size="small">Post your Answer</Button>
+          <Grid item xs={4} sx={{ display: "flex", justifyContent: "end" }}>
+            <Button
+              onClick={() => AddAnswer()}
+              variant="contained"
+              size="small"
+            >
+              Post your Answer
+            </Button>
           </Grid>
         </Grid>
       </Card>

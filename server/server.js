@@ -21,7 +21,7 @@ app.use(
     allowedHeaders: "*,content-type,authorization,accept",
     credentials: true,
     origin: "http://localhost:3000",
-    methods: "*",
+    methods: "GET,POST,PUT,DELETE",
   })
 );
 // Express - Body Middleware

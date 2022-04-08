@@ -8,18 +8,20 @@ const UserItem = ({ user }) => {
   return (
     <Card>
       <CardContent>
-        <Grid container spacing={{ xs: 1, md: 2 }} columns={{ xs: 12, sm: 12, md: 12, xl:12}}>
-          <Grid item xs={6} sm={5} md={5} xl={5}>
+        <Grid
+          container
+          spacing={{ xs: 1, md: 2 }}
+          columns={{ xs: 12, sm: 12, md: 12, xl: 12 }}
+        >
+          <Grid item xs={3} sm={3} md={3} xl={3}>
             <CardMedia
-              sx={{ marginBottom: "15px"}}
-              component="img"           
-              height="100vh"
-              width="100vw"
+              sx={{ marginBottom: "15px", maxHeight: "100px", maxWidth: "75px" }}
+              component="img"
               image={"http://localhost:5000/" + user.profile_image}
               alt="green iguana"
             />
           </Grid>
-          <Grid item xs={6} sm={6} md={6} xl={6}>
+          <Grid item xs={9} sm={9} md={9} xl={9}>
             <Typography gutterBottom variant="body1" component="div">
               {user.name}
             </Typography>

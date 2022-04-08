@@ -4,7 +4,7 @@ import UserItem from "./UserItem";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import { Grid } from "@mui/material";
-import Loading from "./Loading";
+import Loading from "../Loading";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -36,9 +36,9 @@ const Users = () => {
           <Alert severity="error"> {error} </Alert>
         </Stack>
       )}
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 8, md: 12, xl:12}}>
+      <Grid container spacing={{ xs: 2, md: 1 }} columns={{ xs: 12, sm: 12, md: 12, xl:12}}>
         {users.map((user) => (
-          <Grid item  xs={1} sm={4} md={4} xl={4} key={user._id}>
+          <Grid item  xs={6} sm={6} md={4} xl={3} key={user._id}>
             <UserItem user={user}></UserItem>{" "}
           </Grid>
         ))}
