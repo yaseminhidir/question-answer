@@ -15,13 +15,13 @@ const checkAuth = (req, res, next) => {
   if (isTokenIncluded(req)) {
     const access_token = getAccessTokenFromHeader(req);
     jwt.verify(access_token, JWT_SECRET_KEY, (err, decoded) => {
+     
       if (!err) {
         req.user = {
           id: decoded.id,
           name: decoded.name,
         };
-        
-        console.log(decoded);
+     
       }
       return next();
     });

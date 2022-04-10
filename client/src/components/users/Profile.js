@@ -10,6 +10,7 @@ import moment from "moment/min/moment-with-locales";
 import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
 import Loading from "../Loading"
+import MyQuestionsAndAnswers from "./MyQuestionsAndAnswers";
 const Profile = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
@@ -74,6 +75,7 @@ const Profile = () => {
           </Grid>
         </Grid>
       </Card>
+      <MyQuestionsAndAnswers></MyQuestionsAndAnswers>
     </Box>
   );
 };

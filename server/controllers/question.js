@@ -55,29 +55,31 @@ const deleteQuestion = asyncErrorWrapper(async (req, res, next) => {
 const getQuestionsByUserId = asyncErrorWrapper(async (req, res, next) => {
   const user_id = req.user.id;
   const mongoose = require("mongoose");
-  var query = Question.find({
-    user: mongoose.Types.ObjectId(user_id),
-  }).populate({
-    path: "user",
-    select: "name profile_image",
-  });
+  var buildQuery = function () {
+    return Question.find({
+      user: mongoose.Types.ObjectId(user_id),
+    }).populate({
+      path: "user",
+      select: "name profile_image",
+    });
+  };
+
+  var query = buildQuery();
+  var query1 = buildQuery();
 
   query = searchHelper("title", query, req);
-
-  const total = await query.countDocuments();
-
-  console.log("total", total);
-  console.log("query", query);
-  const paginationResult = paginationHelper(total, query, req);
-  query = paginationResult.question;
-  const pagination = paginationResult.query;
-  console.log(pagination);
-
   query = questionSortHelper(query, req);
-  
-  var questions = await query;
+
+  const total = await query1.countDocuments();
+  const paginationResult = await paginationHelper(total, query, req);
+  query = paginationResult.query;
+
+  const pagination = paginationResult.pagination;
+
+  const questions = await query;
   res.json({
-    questions,
+    data: questions,
+    pagination,
   });
 });
 

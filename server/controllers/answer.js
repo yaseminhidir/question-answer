@@ -2,6 +2,10 @@ const Question = require("../models/Question");
 const Answer = require("../models/Answer");
 const { CustomError } = require("../helpers/error/CustomError");
 const asyncErrorWrapper = require("express-async-handler");
+const {
+
+  paginationHelper,
+} = require("../middlewares/query/queryMiddlewareHelpers");
 
 const addNewAnswerToQuestion = asyncErrorWrapper(async (req, res, next) => {
   const question_id = req.data._id;
@@ -40,6 +44,7 @@ const getSingleAnswer = asyncErrorWrapper(async (req, res, next) => {
     data: answer,
   });
 });
+
 
 const editAnswer = asyncErrorWrapper(async (req, res, next) => {
   const { answer_id } = req.params;
@@ -83,6 +88,34 @@ const likeAnswer = asyncErrorWrapper(async (req, res, next) => {
     data: answer,
   });
 });
+const getAnswersByUserId=asyncErrorWrapper(async(req,res,next)=>{
+  const userId = req.user.id;
+  console.log(userId);
+  const mongoose = require("mongoose");
+  var buildQuery = function () {
+    return Answer.find({
+      user: mongoose.Types.ObjectId(userId),
+    }).populate({
+      path: "user",
+      select: "name profile_image",
+    });
+  };
+
+  var query = buildQuery();
+  var query1 = buildQuery();
+  
+  const total = await query1.countDocuments();
+  const paginationResult = await paginationHelper(total, query, req);
+  query = paginationResult.query;
+
+  const pagination = paginationResult.pagination;
+
+  const answers = await query;
+  res.json({
+    data: answers,
+    pagination,
+  });
+})
 
 const undoLikeAnswer = asyncErrorWrapper(async (req, res, next) => {
   const { answer_id } = req.params;
@@ -109,5 +142,6 @@ module.exports = {
   editAnswer,
   deleteAnswer,
   likeAnswer,
-  undoLikeAnswer
+  undoLikeAnswer,
+  getAnswersByUserId
 };

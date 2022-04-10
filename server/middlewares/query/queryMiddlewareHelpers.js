@@ -23,6 +23,7 @@ const questionSortHelper = (query, req) => {
     return (query = query.sort("-likeCount"));
   }
   return (query = query.sort("-createdAt"));
+  
 };
 
 const paginationHelper = async (totalDocuments, query, req) => {
@@ -51,6 +52,7 @@ const paginationHelper = async (totalDocuments, query, req) => {
     };
   }
 
+  
   return {
     query:
       query === undefined ? undefined : query.skip(startIndex).limit(limit),

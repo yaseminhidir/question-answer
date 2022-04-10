@@ -7,7 +7,8 @@ const {
     editAnswer,
     deleteAnswer,
     undoLikeAnswer,
-    likeAnswer
+    likeAnswer,
+
   } = require("../controllers/answer");
 const {
     getAccessToRoute,
@@ -25,5 +26,7 @@ router.put("/:answer_id/edit", [checkQuestionAndAnswerExist, getAccessToRoute,ge
 router.delete("/:answer_id/delete", [checkQuestionAndAnswerExist, getAccessToRoute,getAnswerOwnerAccess ], deleteAnswer);
 router.post("/:answer_id/like", [checkQuestionAndAnswerExist, getAccessToRoute ], likeAnswer);
 router.post("/:answer_id/undo_like", [checkQuestionAndAnswerExist, getAccessToRoute ], undoLikeAnswer);
+
+
 
 module.exports=router;

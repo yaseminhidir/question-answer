@@ -12,6 +12,7 @@ const {
   undoLikeQuestion,
   getQuestionsByUserId,
 } = require("../controllers/question");
+
 const {
   getAccessToRoute,
   getQuestionOwnerAccess,
@@ -39,7 +40,6 @@ router.get(
 );
 router.get(
   "/getQuestionsByUserId",
- 
   getQuestionsByUserId
 );
 router.post("/:id/like", [getAccessToRoute, checkQuestionExist], likeQuestion);
@@ -66,6 +66,7 @@ router.get(
   }),
   getSingleQuestion
 );
+
 router.put(
   "/:id/edit",
   [getAccessToRoute, checkQuestionExist, getQuestionOwnerAccess],
