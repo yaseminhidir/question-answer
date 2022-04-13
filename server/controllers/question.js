@@ -37,15 +37,17 @@ const editQuestion = asyncErrorWrapper(async (req, res, next) => {
   let question = await Question.findById(id);
   question.title = title;
   question.content = content;
-  question = await Question.Save();
+  question = await question.save();
   res.status(200).json({
     success: true,
     data: question,
   });
 });
-const deleteQuestion = asyncErrorWrapper(async (req, res, next) => {
-  const { id } = req.params;
-  await Question.findByIdAndDelete(id);
+const deleteQuestion = asyncErrorWrapper(async (req, res, next) => {//
+  const  {id}  = req.params;
+
+  const question= await Question.findById(id);
+  await question.remove();
   res.status(200).json({
     success: true,
     message: "Question delete operation success",
@@ -60,8 +62,8 @@ const getQuestionsByUserId = asyncErrorWrapper(async (req, res, next) => {
       user: mongoose.Types.ObjectId(user_id),
     }).populate({
       path: "user",
-      select: "name profile_image",
-    });
+      select: "name profile_image email",
+    })
   };
 
   var query = buildQuery();

@@ -20,7 +20,7 @@ const QuestionItem = ({ question }) => {
                 <Typography
                   sx={{ fontSize: 12 }}
                   color="text.secondary"
-                  gutterBottom
+             
                 >
                   {question.likeCount} likes
                 </Typography>{" "}
@@ -28,7 +28,7 @@ const QuestionItem = ({ question }) => {
                 <Typography
                   sx={{ fontSize: 12 }}
                   color="text.secondary"
-                  gutterBottom
+             
                 >
                   {question.answerCount} answers
                 </Typography>{" "}
@@ -39,7 +39,7 @@ const QuestionItem = ({ question }) => {
                 <Typography
                   sx={{ fontSize: 14 }}
                   color="text.secondary"
-                  gutterBottom
+             
                 >
                 <Link to={"/question/" + question._id}> {question.title}</Link>  
                 </Typography>

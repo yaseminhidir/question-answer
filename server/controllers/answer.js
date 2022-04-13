@@ -64,7 +64,7 @@ const deleteAnswer = asyncErrorWrapper(async (req, res, next) => {
   await Answer.findByIdAndRemove(answer_id);
   const question = await Question.findById(question_id);
   question.answers.splice(question.answers.indexOf(answer_id), 1);
-  question.answerCount=questions.answers.length;
+  question.answerCount=question.answers.length;
   await question.save();
 
   return res.status(200).json({
@@ -72,6 +72,7 @@ const deleteAnswer = asyncErrorWrapper(async (req, res, next) => {
     message: "Answer deleted succesfully",
   });
 });
+
 const likeAnswer = asyncErrorWrapper(async (req, res, next) => {
   const { answer_id } = req.params;
   const answer = await Answer.findById(answer_id);
@@ -96,8 +97,8 @@ const getAnswersByUserId=asyncErrorWrapper(async(req,res,next)=>{
     return Answer.find({
       user: mongoose.Types.ObjectId(userId),
     }).populate({
-      path: "user",
-      select: "name profile_image",
+      path: "question",
+      select: "title id",
     });
   };
 

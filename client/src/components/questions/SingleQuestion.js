@@ -29,7 +29,6 @@ const SingleQuestion = () => {
   const [pagination, setPagination] = useState();
   const [currentPage, setCurrentPage] = useState({});
   const [answer, setAnswer] = useState({ content: "" });
- 
 
   function onPageChange(event, new_page) {
     setCurrentPage(new_page);
@@ -142,7 +141,6 @@ const SingleQuestion = () => {
     var { name, value } = event.target;
     var newAnswer = { ...answer, [name]: value };
     setAnswer(newAnswer);
- 
   }
   async function AddAnswer() {
     try {
@@ -154,6 +152,7 @@ const SingleQuestion = () => {
       console.log(res);
       setAnswerMessage("Succesfully added");
       setSuccess(true);
+      setMessage(null);
       load();
     } catch (error) {
       setLoading(false);
@@ -162,6 +161,15 @@ const SingleQuestion = () => {
   }
   return (
     <Box>
+      <Button
+        to="/newquestion"
+        component={Link}
+        variant="contained"
+        size="small"
+        sx={{ marginBottom: "10px" }}
+      >
+        Ask New Question
+      </Button>
       {message != null && (
         <Stack sx={{ width: "100%" }} spacing={2}>
           <Alert severity="error"> {message} </Alert>
@@ -172,15 +180,6 @@ const SingleQuestion = () => {
           <Alert severity="success"> {answerMessage} </Alert>
         </Stack>
       )}
- <Button
-        to="/newquestion"
-        component={Link}
-        variant="contained"
-        size="small"
-        sx={{ marginBottom: "10px" }}
-      >
-        Ask New Question
-      </Button>
       <Typography
         sx={{ fontSize: 14, fontWeight: "bold" }}
         color="text.secondary"
@@ -195,23 +194,20 @@ const SingleQuestion = () => {
             <Grid
               item
               xs={2}
-              sx={{ justifyContent: "end", display: "flex", lineHeight: "0.1" }}
+              sx={{
+                justifyContent: "end",
+                display: "flex",
+                lineHeight: "0.1",
+                paddingTop: "0px !important",
+              }}
             >
               <Box>
                 {" "}
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  color="text.secondary"
-                  gutterBottom
-                >
+                <Typography sx={{ fontSize: 12 }} color="text.secondary">
                   {question.likeCount} likes
                 </Typography>{" "}
                 <br></br>
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  color="text.secondary"
-                  gutterBottom
-                >
+                <Typography sx={{ fontSize: 12 }} color="text.secondary">
                   {question.answerCount} answers
                 </Typography>{" "}
               </Box>
@@ -268,15 +264,12 @@ const SingleQuestion = () => {
                   justifyContent: "end",
                   display: "flex",
                   lineHeight: "0.1",
+                  paddingTop: "0px !important",
                 }}
               >
                 <Box>
                   {" "}
-                  <Typography
-                    sx={{ fontSize: 12 }}
-                    color="text.secondary"
-                    gutterBottom
-                  >
+                  <Typography sx={{ fontSize: 12 }} color="text.secondary">
                     {answer.likeCount} likes
                   </Typography>{" "}
                 </Box>

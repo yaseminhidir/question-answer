@@ -11,6 +11,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
 import Loading from "../Loading"
 import MyQuestionsAndAnswers from "./MyQuestionsAndAnswers";
+import {Button} from "@mui/material"
+
 const Profile = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,15 @@ const Profile = () => {
   }
   return (
     <Box>
+       <Button
+        to="/newquestion"
+        component={Link}
+        variant="contained"
+        size="small"
+        sx={{ marginBottom: "10px" }}
+      >
+        Ask New Question
+      </Button>
       <Card sx={{ padding: "20px" }}>
         <Grid container>
           <Grid item xs={3}>

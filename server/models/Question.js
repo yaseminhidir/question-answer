@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const slugify = require("slugify");
 
+
 const QuestionSchema = new Schema(
   {
     title: {
@@ -55,10 +56,17 @@ QuestionSchema.methods.makeSlug = function () {
   return slugify(this.title, {
     replacement: "-", // replace spaces with replacement character, defaults to `-`
     remove: /[*+~.()'"!:@]/g, // remove characters that match regex, defaults to `undefined`
-    lower: true, // convert to lower case, defaults to `false`
+    lower: true, // converst to lower case, defaults to `false`
   });
 };
-
+QuestionSchema.post("remove", async function(){
+  await Answer.deleteMany({
+    question:this._id
+  })
+})
 QuestionSchema.virtual("likedByCurrentUser");
 
 module.exports = mongoose.model("Question", QuestionSchema);
+
+
+const Answer = require("./Answer");

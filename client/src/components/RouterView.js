@@ -20,7 +20,8 @@ const RouterView = () => {
       <Route path="login" element={<Login />} />
       <Route path="profile"  element={<Profile />} />
      <Route path="profile/edit" element={<EditProfile />} />
-     <Route path="newquestion" element={<AskQuestion/>}></Route>
+     <Route path="newquestion" exact element={<AskQuestion/>}></Route>
+     <Route path="editquestion/:id" element={<AskQuestion/>}></Route>
     </Routes>
   );
 };

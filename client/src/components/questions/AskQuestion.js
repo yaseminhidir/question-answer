@@ -10,6 +10,7 @@ import axios from "axios";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import Loading from "../Loading";
+import { useParams } from "react-router-dom";
 
 const AskQuestion = () => {
   const [question, setQuestion] = useState({ title: "", content: "" });
@@ -17,9 +18,19 @@ const AskQuestion = () => {
   const [error, setError] = useState();
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
+  let { id } = useParams();
+  var questionId = id || 0;
+
+  useEffect(async () => {
     setLoading(true);
+    if (questionId != 0) {
+      var res = await axios.get(
+        "http://localhost:5000/api/questions/" + questionId
+      );
+      setQuestion(res.data.data[0]);
+    }
   }, []);
+
   function onChangeHandler(event) {
     var { name, value } = event.target;
     var newQuestion = { ...question, [name]: value };
@@ -27,24 +38,45 @@ const AskQuestion = () => {
     console.log(newQuestion);
   }
   async function askNewQuestion() {
-    try {
-      setLoading(false);
-      var res = await axios.post(
-        "http://localhost:5000/api/questions/ask",
-        question
-      );
-      setLoading(true);
-      setSuccess(true);
-      setError(null);
-    } catch (error) {
-      setError(error.response.data.message);
-      setSuccess(false);
+    if ((questionId == 0)) {
+      try {
+        setLoading(false);
+        var res = await axios.post(
+          "http://localhost:5000/api/questions/ask",
+          question
+        );
+        setLoading(true);
+        setSuccess(true);
+        setError(null);
+        setQuestion({title:"", content:""});
+      } catch (error) {
+        setError(error.response.data.message);
+        setSuccess(false);
+      }
+    }
+
+    if (questionId != 0) {
+      try {
+     
+        var res = await axios.put(
+          "http://localhost:5000/api/questions/"+
+          questionId+
+          "/edit", question
+        );
+
+        setSuccess(true);
+        setError(null);
+      } catch (error) {
+        setError(error.response.data.message);
+        setSuccess(false);
+      }
     }
   }
   if (!loading) {
     return <Loading></Loading>;
   }
   return (
+    
     <Box
       sx={{
         flexDirection: "column",
