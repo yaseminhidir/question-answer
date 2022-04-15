@@ -107,7 +107,7 @@ const forgotPassword = asyncErrorWrapper(async (req, res, next) => {
     });
     return res.status(200).json({
       success: true,
-      message: "Token Sent to your email",
+      message: "Please check your email",
     });
   } catch (err) {
     user.resetPasswordToken = undefined;

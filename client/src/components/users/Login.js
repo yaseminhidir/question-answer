@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as allActions from "../../redux/actions/authActions";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
+import axios from "axios";
 
 function Copyright(props) {
   return (
@@ -41,6 +42,9 @@ export default function SignIn() {
   var error = useSelector((state) => state.authErrorReducer);
 
   const [user, setUser] = useState({ name: "", password: "", email: "" });
+  const [message, setMessage] = useState(null);
+  const [success, setSuccess] = useState();
+  const [errorForgotPassword, setErrorForgotPassword] = useState(false);
   const dispatch = useDispatch();
 
   function login() {
@@ -52,12 +56,41 @@ export default function SignIn() {
     var newUser = { ...user, [name]: value };
     setUser(newUser);
   }
+
+  async function forgotPassword() {
+    try {
+    
+      var res = await axios.post(
+        "http://localhost:5000/api/auth/forgotpassword/",
+        user
+      );
+      console.log(res.data)
+      setSuccess(true);
+      setErrorForgotPassword(false);
+      setMessage(res.data.message);
+    } catch (error) {
+      setErrorForgotPassword(true);
+      setMessage(error.response.data.message);
+      setSuccess(false);
+      console.log(error.response.data.message);
+    }
+  }
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         {error != null && (
           <Stack sx={{ width: "100%" }} spacing={2}>
             <Alert severity="error"> {error} </Alert>
+          </Stack>
+        )}
+        {errorForgotPassword === true && (
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert severity="error"> {message} </Alert>
+          </Stack>
+        )}
+        {success === true && (
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert severity="success"> {message} </Alert>
           </Stack>
         )}
         <CssBaseline />
@@ -112,9 +145,7 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+                <Link onClick={() => forgotPassword()}>Forgot password?</Link>
               </Grid>
               <Grid item>
                 <Link href="#" variant="body2">

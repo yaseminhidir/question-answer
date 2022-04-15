@@ -22,12 +22,12 @@ const MyQuestionsAndAnswers = () => {
   const [value, setValue] = React.useState("tab1");
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState();
-  const [answer, setAnswer] = useState({ content: "" });
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState();
   const [error, setError] = useState();
-  const [edittingAnswer, setEdittingAnswer] = useState();
+  const [errorAnswer, setErrorAnswer] = useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -35,36 +35,36 @@ const MyQuestionsAndAnswers = () => {
   };
 
   useEffect(async () => {
-
     // İlk açıldığında value = 1
     if (value == "tab1") {
-      getQuestionByUser();
+      getQuestionsByUser();
       setLoading(true);
     } else load();
   }, []);
 
-  async function getQuestionByUser() {
+  async function getQuestionsByUser() {
     var resQuestion = await axios.get(
       "http://localhost:5000/api/questions/getQuestionsByUserId"
     );
     setQuestions(resQuestion.data.data);
   }
-  async function getAnswerByUser() {
+  async function getAnswersByUser() {
     var resAnswer = await axios.get(
       "http://localhost:5000/api/users/getAnswersByUserId"
     );
     setAnswers(resAnswer.data.data);
+
     console.log("answers", answers);
   }
   async function load() {
     if (value == "tab2") {
-      getQuestionByUser();
+      getQuestionsByUser();
       setLoading(true);
       setSuccess(false);
       setError(false);
     }
     if (value == "tab1") {
-      getAnswerByUser();
+      getAnswersByUser();
       setLoading(true);
       setSuccess(false);
       setError(false);
@@ -75,7 +75,7 @@ const MyQuestionsAndAnswers = () => {
       var res = await axios.delete(
         "http://localhost:5000/api/questions/" + question._id + "/delete"
       );
-      getQuestionByUser();
+      getQuestionsByUser();
       setLoading(true);
       setSuccess(res.data.success);
       setMessage(res.data.message);
@@ -95,7 +95,7 @@ const MyQuestionsAndAnswers = () => {
           answer._id +
           "/delete"
       );
-      getAnswerByUser();
+      getAnswersByUser();
       setLoading(true);
       setSuccess(res.data.success);
       setMessage(res.data.message);
@@ -105,20 +105,55 @@ const MyQuestionsAndAnswers = () => {
       setSuccess(false);
     }
   }
-  function onChangeHandler(event) {
+  function onChangeHandler(event, answer) {
+    var newAnswers = [...answers];
+    var answerIndex = newAnswers.indexOf(answer);
     var { name, value } = event.target;
-    var newAnswer = { ...answer, [name]: value };
-    setAnswer(newAnswer);
+    newAnswers[answerIndex] = { ...answer, [name]: value };
+    console.log(newAnswers[answerIndex]);
+    setAnswers(newAnswers);
   }
 
-  async function editAnswer() {
-    var res = await axios.delete(
-      "http://localhost:5000/api/questions/" +
-        answer.question._id +
-        "/answers/" +
-        answer._id +
-        "/edit"
-    );
+  async function updateAnswer(answer) {
+    // {{URL}}/api/questions/625729796f1604b40b5f8118/answers/625729836f1604b40b5f8122/edit
+    try {
+      var res = await axios.put(
+        "http://localhost:5000/api/questions/" +
+          answer.question._id +
+          "/answers/" +
+          answer._id +
+          "/edit",
+        answer
+      );
+      var newAnswers = [...answers];
+      var answerIndex = newAnswers.indexOf(answer);
+      newAnswers[answerIndex] = {
+        ...answer,
+        editting: false,
+      };
+      setAnswers(newAnswers);
+      setSuccess(res.data.success);
+      setMessage("Answer updated succesfully");
+      setError(false);
+      getAnswersByUser();
+   
+    } catch (error) {
+      setMessage(error.response.data.message);
+      setError(true);
+      setSuccess(false);
+    }
+  }
+
+  function editAnswer(answer) {
+    var newAnswers = [...answers];
+    var answerIndex = newAnswers.indexOf(answer);
+    newAnswers[answerIndex] = {
+      ...answer,
+      editting: true,
+    };
+    setAnswers(newAnswers);
+    console.log(newAnswers);
+    console.log("clicked");
   }
 
   if (!loading) {
@@ -247,10 +282,10 @@ const MyQuestionsAndAnswers = () => {
         </Card>
       ) : (
         <Card sx={{ padding: "10px" }}>
+       
           {answers &&
             answers.map((answer) => (
               <Box key={answer._id} sx={{ marginTop: "10px" }}>
-              
                 <Card sx={{ marginBottom: "10px" }}>
                   <CardHeader></CardHeader>
                   <CardContent>
@@ -304,7 +339,7 @@ const MyQuestionsAndAnswers = () => {
                           <EditIcon
                             color="warning"
                             sx={{ cursor: "pointer" }}
-                            onClick={() => setEdittingAnswer(true)}
+                            onClick={() => editAnswer(answer)}
                           ></EditIcon>{" "}
                           <DeleteIcon
                             color="warning"
@@ -313,20 +348,22 @@ const MyQuestionsAndAnswers = () => {
                           ></DeleteIcon>{" "}
                         </Box>
                       </Grid>
-                      {edittingAnswer == true && (
+                      {answer.editting && (
                         <Box>
                           {" "}
                           <TextField
-                            id="about"
+                            id="answer"
                             multiline
                             rows={7}
                             sx={{ width: "100vw" }}
                             size="small"
                             value={answer.content}
                             name="content"
-                            onChange={onChangeHandler}
+                            onChange={(event) => onChangeHandler(event, answer)}
                           />
-                          <Button onClick={() => editAnswer()}>Edit</Button>
+                          <Button onClick={() => updateAnswer(answer)}>
+                            Save
+                          </Button>
                         </Box>
                       )}
                     </Grid>

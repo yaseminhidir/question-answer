@@ -16,6 +16,8 @@ const Users = () => {
       var res = await axios.get("http://localhost:5000/api/users");
       setUsers(res.data.data);
       setLoading(true);
+      setError(null);
+      console.log(res.data.data);
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -24,10 +26,14 @@ const Users = () => {
     getUsers();
   }, []);
 
+  function blockErrorHandler(data) {
+    setError(data);
+  }
+  
   if (!loading) {
     return <Loading></Loading>;
   }
-  
+
   return (
     <div>
       {" "}
@@ -36,10 +42,18 @@ const Users = () => {
           <Alert severity="error"> {error} </Alert>
         </Stack>
       )}
-      <Grid container spacing={{ xs: 2, md: 1 }} columns={{ xs: 12, sm: 12, md: 12, xl:12}}>
+      <Grid
+        container
+        spacing={{ xs: 2, md: 1 }}
+        columns={{ xs: 12, sm: 12, md: 12, xl: 12 }}
+      >
         {users.map((user) => (
-          <Grid item  xs={6} sm={6} md={4} xl={3} key={user._id}>
-            <UserItem user={user}></UserItem>{" "}
+          <Grid item xs={6} sm={6} md={4} xl={3} key={user._id}>
+            <UserItem
+              user={user}
+              getUsers={getUsers}
+              blockErrorHandler={blockErrorHandler}
+            ></UserItem>{" "}
           </Grid>
         ))}
       </Grid>
